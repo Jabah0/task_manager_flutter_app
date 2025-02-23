@@ -9,7 +9,7 @@ class TaskEntity extends Equatable {
   final DateTime deadline;
   final TaskPriority priority;
   final TaskStatus status;
-  final List<TaskEntity>? subTasks;
+  final List<TaskEntity> subTasks;
   final bool isMain;
 
   const TaskEntity({

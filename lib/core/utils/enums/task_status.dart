@@ -1,8 +1,8 @@
-enum TaskStatus { completed, toDo, inProgress }
+enum TaskStatus { toDo, inProgress, completed }
 
 extension TaskStatusExtension on TaskStatus {
   String toJson() {
-    return this.toString().split('.').last;
+    return toString().split('.').last;
   }
 
   static TaskStatus fromJson(String json) {

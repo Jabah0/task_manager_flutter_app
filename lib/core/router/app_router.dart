@@ -1,7 +1,8 @@
 import 'package:go_router/go_router.dart';
+import 'package:task_manager/features/task/domain/entities/task.dart';
+import 'package:task_manager/features/task/presentation/pages/sub_tasks_screen.dart';
 import 'package:task_manager/features/task/presentation/pages/task_detail_screen.dart';
 import 'package:task_manager/features/task/presentation/pages/task_list_screen.dart';
-import '../../features/task/data/models/task_model.dart';
 import 'route_names.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -14,8 +15,15 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: RouteNames.taskDetail,
       builder: (context, state) {
-        final task = state.extra as TaskModel;
+        final task = state.extra as TaskEntity;
         return TaskDetailScreen(task: task);
+      },
+    ),
+    GoRoute(
+      path: RouteNames.subTasks,
+      builder: (context, state) {
+        final task = state.extra as TaskEntity;
+        return SubTasksScreen(parentTask: task);
       },
     ),
   ],

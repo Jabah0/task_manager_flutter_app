@@ -70,7 +70,10 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         ChangeTaskStatusParams(taskId: event.taskId, status: event.newStatus));
     result.fold(
       (failure) => emit(TaskError(message: failure.message)),
-      (_) => add(LoadTasksEvent()),
+      (task) {
+        emit(TaskUpdated(task: task));
+        add(LoadTasksEvent());
+      },
     );
   }
 
@@ -82,7 +85,10 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     ));
     result.fold(
       (failure) => emit(TaskError(message: failure.message)),
-      (_) => add(LoadTasksEvent()),
+      (task) {
+        emit(TaskUpdated(task: task));
+        add(LoadTasksEvent());
+      },
     );
   }
 
@@ -97,7 +103,10 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     ));
     result.fold(
       (failure) => emit(TaskError(message: failure.message)),
-      (_) => add(LoadTasksEvent()),
+      (task) {
+        emit(TaskUpdated(task: task));
+        add(LoadTasksEvent());
+      },
     );
   }
 

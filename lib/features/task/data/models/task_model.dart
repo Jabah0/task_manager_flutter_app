@@ -40,10 +40,8 @@ class TaskModel extends TaskEntity {
       'priority': priority.toJson(),
       'status': status.toJson(),
       'isMain': isMain,
-      'subTasks': subTasks
-          ?.whereType<TaskModel>()
-          .map((task) => task.toJson())
-          .toList(),
+      'subTasks':
+          subTasks.whereType<TaskModel>().map((task) => task.toJson()).toList(),
     };
   }
 

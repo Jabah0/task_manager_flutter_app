@@ -18,6 +18,15 @@ class TaskLoaded extends TaskState {
   List<Object> get props => [tasks];
 }
 
+class TaskUpdated extends TaskState {
+  final TaskEntity task;
+
+  TaskUpdated({required this.task});
+
+  @override
+  List<Object> get props => [task];
+}
+
 class TaskError extends TaskState {
   final String message;
 

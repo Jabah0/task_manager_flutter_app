@@ -40,12 +40,14 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(() => DeleteTask(sl()));
 
   /// Presentation Layer (BLoC)
-  sl.registerFactory(() => TaskBloc(
-        getTasks: sl(),
-        addTask: sl(),
-        addSubTask: sl(),
-        changeTaskStatus: sl(),
-        changeTaskPriority: sl(),
-        deleteTask: sl(),
-      ));
+  sl.registerFactory(
+    () => TaskBloc(
+      getTasks: sl(),
+      addTask: sl(),
+      addSubTask: sl(),
+      changeTaskStatus: sl(),
+      changeTaskPriority: sl(),
+      deleteTask: sl(),
+    ),
+  );
 }

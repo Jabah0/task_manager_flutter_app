@@ -2,7 +2,7 @@ enum TaskPriority { low, medium, high }
 
 extension TaskPriorityExtension on TaskPriority {
   String toJson() {
-    return this.toString().split('.').last;
+    return toString().split('.').last;
   }
 
   static TaskPriority fromJson(String json) {

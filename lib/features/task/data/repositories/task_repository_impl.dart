@@ -24,7 +24,7 @@ class TaskRepositoryImpl implements TaskRepository {
   }
 
   @override
-  Future<Either<Failure, void>> addTask(
+  Future<Either<Failure, TaskEntity>> addTask(
     String title,
     String description,
     DateTime deadline,
@@ -42,14 +42,14 @@ class TaskRepositoryImpl implements TaskRepository {
         isMain: true,
       );
       localDataSource.addTask(taskModel);
-      return const Right(null);
+      return Right(taskModel);
     } catch (e) {
       return Left(DatabaseFailure("Failed to add task"));
     }
   }
 
   @override
-  Future<Either<Failure, void>> addSubTask(
+  Future<Either<Failure, TaskEntity>> addSubTask(
     String mainTaskId,
     String title,
     String description,
@@ -57,7 +57,7 @@ class TaskRepositoryImpl implements TaskRepository {
     TaskPriority priority,
   ) async {
     try {
-      localDataSource.addSubTask(
+      final updatedTask = localDataSource.addSubTask(
           mainTaskId,
           TaskModel(
             id: Uuid().v4(),
@@ -68,33 +68,34 @@ class TaskRepositoryImpl implements TaskRepository {
             status: TaskStatus.toDo,
             isMain: false,
           ));
-      return const Right(null);
+      return Right(updatedTask);
     } catch (e) {
       return Left(DatabaseFailure("Failed to add sub-task"));
     }
   }
 
   @override
-  Future<Either<Failure, void>> changeTaskStatus(
+  Future<Either<Failure, TaskEntity>> changeTaskStatus(
     String taskId,
     TaskStatus status,
   ) async {
     try {
-      localDataSource.changeTaskStatus(taskId, status);
-      return const Right(null);
+      final updatedTask = localDataSource.changeTaskStatus(taskId, status);
+      return Right(updatedTask);
     } catch (e) {
       return Left(DatabaseFailure("Failed to change task status"));
     }
   }
 
   @override
-  Future<Either<Failure, void>> changeTaskPriority(
+  Future<Either<Failure, TaskEntity>> changeTaskPriority(
     String taskId,
     TaskPriority newPriority,
   ) async {
     try {
-      localDataSource.changeTaskPriority(taskId, newPriority);
-      return const Right(null);
+      final updatedTask =
+          localDataSource.changeTaskPriority(taskId, newPriority);
+      return Right(updatedTask);
     } catch (e) {
       return Left(DatabaseFailure("Failed to change task priority"));
     }

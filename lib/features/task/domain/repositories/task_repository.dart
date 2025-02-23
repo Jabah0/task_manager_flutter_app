@@ -6,22 +6,22 @@ import '../entities/task.dart';
 
 abstract class TaskRepository {
   Future<Either<Failure, List<TaskEntity>>> getTasks();
-  Future<Either<Failure, void>> addTask(
+  Future<Either<Failure, TaskEntity>> addTask(
     String title,
     String description,
     DateTime deadline,
     TaskPriority priority,
   );
-  Future<Either<Failure, void>> addSubTask(
+  Future<Either<Failure, TaskEntity>> addSubTask(
     String mainTaskId,
     String title,
     String description,
     DateTime deadline,
     TaskPriority priority,
   );
-  Future<Either<Failure, void>> changeTaskStatus(
+  Future<Either<Failure, TaskEntity>> changeTaskStatus(
       String taskId, TaskStatus status);
-  Future<Either<Failure, void>> changeTaskPriority(
+  Future<Either<Failure, TaskEntity>> changeTaskPriority(
       String taskId, TaskPriority newPriority);
   Future<Either<Failure, void>> deleteTask(String taskId);
 }
