@@ -7,6 +7,8 @@ import 'package:task_manager/core/utils/enums/task_priority.dart';
 import 'package:task_manager/core/utils/enums/task_status.dart';
 import 'package:task_manager/features/task/domain/entities/task.dart';
 import 'package:task_manager/features/task/presentation/bloc/task_bloc.dart';
+import 'package:task_manager/features/task/presentation/widgets/priority_badge.dart';
+import 'package:task_manager/features/task/presentation/widgets/status_badge.dart';
 
 class TaskDetailScreen extends StatelessWidget {
   final TaskEntity task;
@@ -40,7 +42,7 @@ class TaskDetailScreen extends StatelessWidget {
                       const Icon(Icons.calendar_today, size: 18),
                       const SizedBox(width: 8),
                       Text(
-                        "Deadline: ${DateFormat('yyyy-MM-dd HH:mm').format(currentTask.deadline)}",
+                        "Deadline: ${DateFormat('yyyy-MM-dd').format(currentTask.deadline)}",
                         style: const TextStyle(fontSize: 16),
                       ),
                     ],
@@ -53,25 +55,9 @@ class TaskDetailScreen extends StatelessWidget {
                       const Text("Priority:", style: TextStyle(fontSize: 16)),
                       const SizedBox(width: 8),
                       TextButton(
-                        onPressed: () =>
-                            _showPriorityBottomSheet(context, currentTask),
-                        child: BlocBuilder<TaskBloc, TaskState>(
-                          buildWhen: (previous, current) {
-                            return current is TaskUpdated &&
-                                current.task.id == currentTask.id;
-                          },
-                          builder: (context, state) {
-                            TaskPriority priority = currentTask.priority;
-
-                            if (state is TaskUpdated &&
-                                state.task.id == currentTask.id) {
-                              priority = state.task.priority;
-                            }
-
-                            return _buildFixedPriorityBadge(priority);
-                          },
-                        ),
-                      ),
+                          onPressed: () =>
+                              _showPriorityBottomSheet(context, currentTask),
+                          child: _buildPriorityBadge(currentTask)),
                     ],
                   ),
                   const SizedBox(height: 8),
@@ -84,22 +70,7 @@ class TaskDetailScreen extends StatelessWidget {
                       TextButton(
                         onPressed: () =>
                             _showStatusBottomSheet(context, currentTask),
-                        child: BlocBuilder<TaskBloc, TaskState>(
-                          buildWhen: (previous, current) {
-                            return current is TaskUpdated &&
-                                current.task.id == currentTask.id;
-                          },
-                          builder: (context, state) {
-                            TaskStatus status = currentTask.status;
-
-                            if (state is TaskUpdated &&
-                                state.task.id == currentTask.id) {
-                              status = state.task.status;
-                            }
-
-                            return _buildFixedStatusBadge(status);
-                          },
-                        ),
+                        child: _buildStatusBadge(currentTask),
                       ),
                     ],
                   ),
@@ -206,8 +177,7 @@ class TaskDetailScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: TaskPriority.values.map((priority) {
                 return ListTile(
-                  title: Text(priority.name.toUpperCase()),
-                  leading: _buildFixedPriorityBadge(priority),
+                  leading: priorityBadge(priority),
                   onTap: () {
                     context.read<TaskBloc>().add(
                           ChangeTaskPriorityEvent(
@@ -215,6 +185,7 @@ class TaskDetailScreen extends StatelessWidget {
                             newPriority: priority,
                           ),
                         );
+                    Navigator.pop(context);
                   },
                 );
               }).toList(),
@@ -240,8 +211,7 @@ class TaskDetailScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: TaskStatus.values.map((status) {
                 return ListTile(
-                  title: Text(status.name.toUpperCase()),
-                  leading: _buildFixedStatusBadge(status),
+                  leading: statusBadge(status),
                   onTap: () {
                     context.read<TaskBloc>().add(
                           ChangeTaskStatusEvent(
@@ -249,6 +219,7 @@ class TaskDetailScreen extends StatelessWidget {
                             status,
                           ),
                         );
+                    Navigator.pop(context);
                   },
                 );
               }).toList(),
@@ -259,59 +230,37 @@ class TaskDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFixedPriorityBadge(TaskPriority priority) {
-    Color bgColor;
-    switch (priority) {
-      case TaskPriority.low:
-        bgColor = Colors.green;
-        break;
-      case TaskPriority.medium:
-        bgColor = Colors.orange;
-        break;
-      case TaskPriority.high:
-        bgColor = Colors.red;
-        break;
-    }
+  Widget _buildStatusBadge(TaskEntity currentTask) {
+    return BlocBuilder<TaskBloc, TaskState>(
+      buildWhen: (previous, current) {
+        return current is TaskUpdated && current.task.id == currentTask.id;
+      },
+      builder: (context, state) {
+        TaskStatus status = currentTask.status;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: bgColor.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: bgColor, width: 1.5),
-      ),
-      child: Text(
-        priority.name.toUpperCase(),
-        style: TextStyle(color: bgColor, fontWeight: FontWeight.bold),
-      ),
+        if (state is TaskUpdated && state.task.id == currentTask.id) {
+          status = state.task.status;
+        }
+
+        return statusBadge(status);
+      },
     );
   }
 
-  Widget _buildFixedStatusBadge(TaskStatus status) {
-    Color bgColor;
-    switch (status) {
-      case TaskStatus.toDo:
-        bgColor = Colors.orange;
-        break;
-      case TaskStatus.inProgress:
-        bgColor = Colors.blue;
-        break;
-      case TaskStatus.completed:
-        bgColor = Colors.green;
-        break;
-    }
+  Widget _buildPriorityBadge(TaskEntity currentTask) {
+    return BlocBuilder<TaskBloc, TaskState>(
+      buildWhen: (previous, current) {
+        return current is TaskUpdated && current.task.id == currentTask.id;
+      },
+      builder: (context, state) {
+        TaskPriority priority = currentTask.priority;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: bgColor.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: bgColor, width: 1.5),
-      ),
-      child: Text(
-        status.name.toUpperCase(),
-        style: TextStyle(color: bgColor, fontWeight: FontWeight.bold),
-      ),
+        if (state is TaskUpdated && state.task.id == currentTask.id) {
+          priority = state.task.priority;
+        }
+
+        return priorityBadge(priority);
+      },
     );
   }
 }
